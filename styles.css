@@ -200,3 +200,8 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:tex
 #orderProductList .secondary-action:hover:not(:disabled){border-color:#ff981e;background:rgba(255,152,30,.12)}
 #orderProductList .secondary-action:disabled{opacity:.25;cursor:default}
 @media(max-width:420px){#orderProductList .product-order-row{grid-template-columns:minmax(0,1fr) 36px 36px;gap:5px;padding:8px}#orderProductList .secondary-action{width:36px;height:36px}}
+
+/* Botón quitar stock alineado al extremo derecho sin crear otra fila */
+#stockList .table-row{grid-template-columns:minmax(220px,1fr) 130px 130px 130px 32px;gap:12px}
+#stockList .table-row>[data-stock-remove]{display:grid;place-items:center;justify-self:end;align-self:center;width:30px;height:30px;min-width:30px;margin:0;padding:0;border:1px solid var(--line);border-radius:8px;background:transparent;color:#ff6675;font-size:20px;line-height:1;cursor:pointer}
+#stockList .table-row>[data-stock-remove]:hover{background:rgba(255,102,117,.12);border-color:#ff6675}
