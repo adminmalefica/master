@@ -1,4 +1,4 @@
-const firebaseConfig={apiKey:'AIzaSyCSouP73rp_r9rMEkxtt0tUdD6uR7IvcNw',authDomain:'malefica-burger-master.firebaseapp.com',databaseURL:'https://malefica-burger-master-default-rtdb.firebaseio.com',projectId:'malefica-burger-master',storageBucket:'malefica-burger-master.firebasestorage.app',messagingSenderId:'168473357079',appId:'1:168473357079:web:0b2935095daa9312b7a552'};
+const firebaseConfig={apiKey:'AIzaSyCSouP73rp_r9rMEkxttOtUdD6uR7IvcNw',authDomain:'malefica-burger-master.firebaseapp.com',databaseURL:'https://malefica-burger-master-default-rtdb.firebaseio.com',projectId:'malefica-burger-master',storageBucket:'malefica-burger-master.firebasestorage.app',messagingSenderId:'168473357079',appId:'1:168473357079:web:0b2935095daa9312b7a552'};
 firebase.initializeApp(firebaseConfig);
 const masterAuth=firebase.auth(),masterDb=firebase.database(),MASTER_ADMIN_EMAIL='jonagularte98@gmail.com';let cloudReady=false,applyingCloud=false,cloudStarted=false;
 const DEFAULT_PRODUCTS = [
