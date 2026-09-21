@@ -77,8 +77,8 @@ function renderProductOrdering(){
  const entries=products.map((p,i)=>({p,i})).filter(x=>x.p.cat===orderCategorySelection);
  list.innerHTML=entries.map(({p,i},position)=>`<div class="product-order-row"><span class="product-order-name">${position+1}. ${escapeHTML(p.name)}</span><button type="button" class="secondary-action" data-order-index="${i}" data-order-direction="-1" ${position===0?'disabled':''} aria-label="Subir ${escapeHTML(p.name)}">↑</button><button type="button" class="secondary-action" data-order-index="${i}" data-order-direction="1" ${position===entries.length-1?'disabled':''} aria-label="Bajar ${escapeHTML(p.name)}">↓</button></div>`).join('');
 }
-$('#orderCategory').addEventListener('change',e=>{orderCategorySelection=e.target.value;renderProductOrdering()});
-$('#orderProductList').addEventListener('click',e=>{
+document.addEventListener('change',e=>{if(e.target?.id!=='orderCategory')return;orderCategorySelection=e.target.value;renderProductOrdering()});
+document.addEventListener('click',e=>{if(!e.target.closest('#orderProductList'))return;
  const button=e.target.closest('[data-order-index]');if(!button)return;
  const index=Number(button.dataset.orderIndex),direction=Number(button.dataset.orderDirection);
  const category=products[index]?.cat;if(!category)return;
