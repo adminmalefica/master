@@ -295,3 +295,14 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:tex
 .manual-price-check.modal-check input[type="checkbox"]{appearance:auto!important;-webkit-appearance:checkbox!important;display:block!important;box-sizing:border-box!important;width:18px!important;height:18px!important;min-width:18px!important;min-height:18px!important;flex:0 0 18px!important;margin:0!important;padding:0!important;accent-color:var(--orange)}
 .manual-price-check.modal-check span{display:block!important;min-width:0;flex:0 1 auto!important;margin:0!important;padding:0!important;color:var(--text);font-size:13px;line-height:1.32;text-align:left}
 @media(max-width:850px){.manual-price-check.modal-check{gap:8px!important}.manual-price-check.modal-check span{font-size:13px}}
+
+/* Descuentos en ticket y pedidos */
+.ticket-payment-actions{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.discount-button{min-height:34px;padding:0 11px;border:1px solid var(--line);border-radius:9px;background:var(--surface-2);color:var(--muted);font:inherit;font-size:12px;font-weight:800;cursor:pointer}
+.discount-button:hover,.discount-button.active{border-color:var(--orange);color:var(--orange);background:rgba(255,149,28,.08)}
+.discount-picker>p:not(.eyebrow){margin:0 0 16px;color:var(--muted)}
+.discount-options{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.discount-options button{min-height:45px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--text);font:inherit;font-size:14px;font-weight:800;cursor:pointer}
+.discount-options button:hover,.discount-options button.active{border-color:var(--orange);background:rgba(255,149,28,.12);color:var(--orange)}
+.order-discount{display:flex;justify-content:space-between;gap:10px;margin:10px 0 0;padding:9px 0;border-top:1px dashed var(--line);color:var(--orange);font-size:13px;font-weight:800}
+@media(max-width:850px){.ticket-payment-actions{gap:8px}.discount-button{min-height:32px;padding:0 10px}.order-actions [data-order="discount"]{width:100%}}
