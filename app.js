@@ -60,7 +60,7 @@ function save(){localStorage.setItem(STORE.products,JSON.stringify(products));lo
 function showToast(message){const t=$('#toast');t.textContent=message;t.classList.add('show');clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>t.classList.remove('show'),2300)}
 function showView(name){$$('.view').forEach(v=>v.classList.toggle('active',v.id===`view-${name}`));$$('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.view===name));if(name==='orders')renderOrders();if(name==='stock')renderStock();if(name==='sales')renderSales();if(name==='expenses')renderExpenses();if(name==='settings')renderSettings();window.scrollTo(0,0)}
 function renderCategories(){const cats=['Todos',...new Set(products.map(p=>p.cat))];$('#categoryTabs').innerHTML=cats.map(c=>`<button class="${c===activeCategory?'active':''}" data-cat="${escapeHTML(c)}">${escapeHTML(c)}</button>`).join('')}
-function renderProducts(){const q=$('#productSearch').value.trim().toLowerCase();const list=products.filter(p=>(activeCategory==='Todos'||p.cat===activeCategory)&&(!q||`${p.name} ${p.desc}`.toLowerCase().includes(q)));const ordering=reorderProductsMode;$('#productGrid').classList.toggle('ordering-products',ordering);$('#productGrid').innerHTML=list.length?list.map((p)=>{const idx=products.indexOf(p),s=stock.find(x=>x.name===p.name),low=s&&s.qty<=s.min,imgSrc=p.img&&(window.PRODUCT_IMAGES?.[p.img]||`./assets/${p.img}`),qty=cart.filter(x=>x.productIndex===idx).reduce((n,x)=>n+x.qty,0),allowsExtras=['hamburguesas','combos'].includes(String(p.cat).toLowerCase());return `<article class="product-card ${qty?'selected':''} ${ordering?'is-sortable':''}" data-product="${idx}" data-sort-index="${idx}" draggable="${ordering}" title="${ordering?'Arrastrá para cambiar el orden':escapeHTML(p.desc)}" role="button" tabindex="0" aria-label="${ordering?'Ordenar ': 'Agregar '}${escapeHTML(p.name)}">${ordering?'<span class="product-drag-handle" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>':''}${qty&&allowsExtras?`<button type="button" class="card-extra-btn" data-product-extra="${idx}">+ Extras</button>`:''}${imgSrc?`<img class="product-image" src="${imgSrc}" alt="${escapeHTML(p.name)}">`:`<span class="product-placeholder">${p.emoji||'🍔'}</span>`}<span class="product-info"><h3>${escapeHTML(p.name)}</h3><span class="product-bottom"><span><span class="product-price">${p.manualPrice||p.price<=0?'Definir precio':money(p.price)}</span>${s?`<span class="product-stock ${low?'low':''}"> · ${s.qty} disponibles</span>`:''}</span>${qty?`<span class="card-stepper"><button type="button" data-product-action="minus" data-index="${idx}" aria-label="Restar ${escapeHTML(p.name)}">−</button><strong>${qty}</strong><button type="button" data-product-action="plus" data-index="${idx}" aria-label="Sumar ${escapeHTML(p.name)}">+</button></span>`:`<span class="add-mark">+</span>`}</span></span></article>`}).join(''):`<div class="empty-state"><div><div class="empty-icon">⌕</div><p>No encontramos productos</p><small>Probá con otra búsqueda.</small></div></div>`}
+function renderProducts(){const q=$('#productSearch').value.trim().toLowerCase();const list=products.filter(p=>(activeCategory==='Todos'||p.cat===activeCategory)&&(!q||`${p.name} ${p.desc}`.toLowerCase().includes(q)));const ordering=reorderProductsMode;$('#productGrid').classList.toggle('ordering-products',ordering);$('#productGrid').innerHTML=list.length?list.map((p)=>{const idx=products.indexOf(p),s=stock.find(x=>x.name===p.name),low=s&&s.qty<=s.min,imgSrc=p.imageData||p.img&&(window.PRODUCT_IMAGES?.[p.img]||`./assets/${p.img}`),qty=cart.filter(x=>x.productIndex===idx).reduce((n,x)=>n+x.qty,0),allowsExtras=['hamburguesas','combos'].includes(String(p.cat).toLowerCase());return `<article class="product-card ${qty?'selected':''} ${ordering?'is-sortable':''}" data-product="${idx}" data-sort-index="${idx}" draggable="${ordering}" title="${ordering?'Arrastrá para cambiar el orden':escapeHTML(p.desc)}" role="button" tabindex="0" aria-label="${ordering?'Ordenar ': 'Agregar '}${escapeHTML(p.name)}">${ordering?'<span class="product-drag-handle" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>':''}${qty&&allowsExtras?`<button type="button" class="card-extra-btn" data-product-extra="${idx}">+ Extras</button>`:''}${imgSrc?`<img class="product-image" src="${imgSrc}" alt="${escapeHTML(p.name)}">`:`<span class="product-placeholder">${p.emoji||'🍔'}</span>`}<span class="product-info"><h3>${escapeHTML(p.name)}</h3><span class="product-bottom"><span><span class="product-price">${p.manualPrice||p.price<=0?'Definir precio':money(p.price)}</span>${s?`<span class="product-stock ${low?'low':''}"> · ${s.qty} disponibles</span>`:''}</span>${qty?`<span class="card-stepper"><button type="button" data-product-action="minus" data-index="${idx}" aria-label="Restar ${escapeHTML(p.name)}">−</button><strong>${qty}</strong><button type="button" data-product-action="plus" data-index="${idx}" aria-label="Sumar ${escapeHTML(p.name)}">+</button></span>`:`<span class="add-mark">+</span>`}</span></span></article>`}).join(''):`<div class="empty-state"><div><div class="empty-icon">⌕</div><p>No encontramos productos</p><small>Probá con otra búsqueda.</small></div></div>`}
 function addProduct(index){const p=products[index];if(!p)return;if(p.manualPrice||p.price<=0)return askVariablePrice(index);addCartLine(index,p.price,[])}
 function addCartLine(index,basePrice,selectedExtras=[]){const p=products[index],extraTotal=selectedExtras.reduce((sum,x)=>sum+Number(x.price),0),price=Number(basePrice)+extraTotal,key=selectedExtras.map(x=>x.name).sort().join('|'),line=cart.find(x=>x.productIndex===index&&x.price===price&&(x.extrasKey||'')===key);line?line.qty++:cart.push({productIndex:index,name:p.name,price,basePrice:Number(basePrice),extras:selectedExtras,extrasKey:key,qty:1});renderCart()}
 function openBurgerExtras(index){const p=products[index],manual=p.manualPrice||p.price<=0;openModal(`<h2>${escapeHTML(p.name)}</h2><form id="burgerExtrasForm" class="modal-form">${manual?'<label>Precio base<input id="burgerBasePrice" type="number" min="1" step="1" required autofocus></label>':''}<div class="extras-picker"><span>Agregar extras</span>${extras.length?extras.map((x,i)=>`<label><input type="checkbox" data-extra-index="${i}"><span>${escapeHTML(x.name)}</span><b>+${money(x.price)}</b></label>`).join(''):'<p class="muted">No hay extras configurados.</p>'}</div><button class="primary-action" type="submit">Agregar al ticket</button></form>`);$('#burgerExtrasForm').onsubmit=e=>{e.preventDefault();const basePrice=manual?Number($('#burgerBasePrice').value):Number(p.price);if(basePrice<=0)return;const selected=[...$$('[data-extra-index]:checked')].map(el=>({...extras[Number(el.dataset.extraIndex)]}));addCartLine(index,basePrice,selected);closeModal()}}
@@ -147,11 +147,36 @@ function productIconOptions(category){
   const key=String(category||'').trim().toLowerCase();
   return CATEGORY_ICON_OPTIONS[key]||[['🍔','Hamburguesa']];
 }
+function compressProductImage(file){
+  if(!file)return Promise.resolve('');
+  if(!file.type.startsWith('image/'))return Promise.reject(new Error('Elegí un archivo de imagen válido.'));
+  if(file.size>8*1024*1024)return Promise.reject(new Error('La imagen debe pesar menos de 8 MB.'));
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onerror=()=>reject(new Error('No se pudo leer la imagen.'));
+    reader.onload=()=>{
+      const image=new Image();
+      image.onerror=()=>reject(new Error('No se pudo procesar la imagen.'));
+      image.onload=()=>{
+        const maxSize=360,scale=Math.min(1,maxSize/Math.max(image.width,image.height));
+        const canvas=document.createElement('canvas');
+        canvas.width=Math.max(1,Math.round(image.width*scale));
+        canvas.height=Math.max(1,Math.round(image.height*scale));
+        const context=canvas.getContext('2d');
+        context.fillStyle='#171217';context.fillRect(0,0,canvas.width,canvas.height);
+        context.drawImage(image,0,0,canvas.width,canvas.height);
+        resolve(canvas.toDataURL('image/jpeg',.78));
+      };
+      image.src=reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
 function openNewProductModal(){
   const savedCategories=[...new Set(products.map(p=>p.cat).filter(Boolean))];
   const defaultCategories=['Hamburguesas','Combos','Bebidas','Papas','Entradas'];
   const cats=[...new Set([...defaultCategories,...savedCategories])];
-  openModal(`<h2>Agregar producto</h2><form id="newProductForm" class="modal-form product-create-form"><label>Nombre<input id="newProductName" required autocomplete="off"></label><label>Categoría<select id="newProductCategory" required>${cats.map(c=>`<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join('')}</select></label><div id="newProductIconWrap" class="new-product-icon-wrap" aria-label="Ícono del producto"></div><label class="manual-price-check modal-check"><input id="newProductManual" type="checkbox"><span>Definir el precio al agregarlo al ticket</span></label><label id="newProductPriceWrap">Precio fijo<input id="newProductPrice" type="number" min="1" step="1" required></label><button class="primary-action" type="submit">Guardar producto</button></form>`);
+  openModal(`<h2>Agregar producto</h2><form id="newProductForm" class="modal-form product-create-form"><label>Nombre<input id="newProductName" required autocomplete="off"></label><label>Categoría<select id="newProductCategory" required>${cats.map(c=>`<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join('')}</select></label><div id="newProductIconWrap" class="new-product-icon-wrap" aria-label="Ícono del producto"></div><label class="product-image-upload"><span>Imagen del producto <em>Opcional</em></span><input id="newProductImage" type="file" accept="image/*"><small>Subí una foto o dejalo vacío para usar el ícono.</small></label><div id="newProductImagePreview" class="new-product-image-preview" hidden></div><label class="manual-price-check modal-check"><input id="newProductManual" type="checkbox"><span>Definir el precio al agregarlo al ticket</span></label><label id="newProductPriceWrap">Precio fijo<input id="newProductPrice" type="number" min="1" step="1" required></label><button class="primary-action" type="submit">Guardar producto</button></form>`);
   const manual=$('#newProductManual'),price=$('#newProductPrice'),wrap=$('#newProductPriceWrap'),category=$('#newProductCategory'),iconWrap=$('#newProductIconWrap');
   let selectedProductIcon='';
   const renderIconOptions=()=>{
@@ -165,15 +190,30 @@ function openNewProductModal(){
   };
   category.addEventListener('change',renderIconOptions);
   iconWrap.addEventListener('click',e=>{const button=e.target.closest('[data-product-icon]');if(!button)return;selectedProductIcon=button.dataset.productIcon;renderIconOptions()});
+  const imageInput=$('#newProductImage'),imagePreview=$('#newProductImagePreview');
+  imageInput.addEventListener('change',()=>{
+    const file=imageInput.files?.[0];
+    if(!file){imagePreview.hidden=true;imagePreview.innerHTML='';return}
+    const localUrl=URL.createObjectURL(file);
+    imagePreview.hidden=false;imagePreview.innerHTML=`<img src="${localUrl}" alt="Vista previa de la imagen"><span>Se comprimirá al guardar</span>`;
+    imagePreview.querySelector('img').onload=()=>URL.revokeObjectURL(localUrl);
+  });
   renderIconOptions();
   manual.onchange=()=>{price.disabled=manual.checked;price.required=!manual.checked;wrap.classList.toggle('disabled-field',manual.checked)};
-  $('#newProductForm').onsubmit=e=>{
+  $('#newProductForm').onsubmit=async e=>{
     e.preventDefault();
     const name=$('#newProductName').value.trim(),cat=category.value,manualPrice=manual.checked,priceValue=manualPrice?0:Number(price.value);
     if(!name||!cat||(!manualPrice&&priceValue<=0))return;
     if(products.some(p=>p.name.toLowerCase()===name.toLowerCase()))return showToast('Ya existe un producto con ese nombre');
-    products.push({name,cat,price:priceValue,manualPrice,desc:'',emoji:selectedProductIcon||productIconOptions(cat)[0][0]});
-    if(String(cat).toLowerCase()==='bebidas')stock.push({name,qty:20,min:5,cost:0});save();closeModal();renderSettings();renderCategories();renderProducts();showToast('Producto agregado');
+    const submit=e.currentTarget.querySelector('button[type="submit"]');
+    submit.disabled=true;submit.textContent='Guardando imagen…';
+    try{
+      const imageData=await compressProductImage(imageInput.files?.[0]);
+      products.push({name,cat,price:priceValue,manualPrice,desc:'',emoji:selectedProductIcon||productIconOptions(cat)[0][0],...(imageData?{imageData}:{})});
+      if(String(cat).toLowerCase()==='bebidas')stock.push({name,qty:20,min:5,cost:0});save();closeModal();renderSettings();renderCategories();renderProducts();showToast('Producto agregado');
+    }catch(error){
+      showToast(error.message||'No se pudo guardar la imagen.');submit.disabled=false;submit.textContent='Guardar producto';
+    }
   };
 }
 function removeProductSetting(index){const p=products[index];if(!p)return;openConfirm({title:`Eliminar ${p.name}`,message:'Se quitará del menú y del stock. Las ventas anteriores se conservarán.',confirmText:'Sí, eliminar',onConfirm:()=>{products.splice(index,1);stock=stock.filter(s=>s.name!==p.name);cart=cart.filter(x=>x.productIndex!==index).map(x=>({...x,productIndex:x.productIndex>index?x.productIndex-1:x.productIndex}));if(activeCategory!=='Todos'&&!products.some(x=>x.cat===activeCategory))activeCategory='Todos';save();renderSettings();renderCategories();renderProducts();renderCart();showToast('Producto eliminado')}})}
