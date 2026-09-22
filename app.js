@@ -211,3 +211,35 @@ if(document.modelContext?.registerTool){
   register({name:'add_item_to_ticket',title:'Add item to ticket',description:'Add a menu product with a fixed price to the current visible ticket.',inputSchema:{type:'object',properties:{name:{type:'string'},quantity:{type:'integer',minimum:1,maximum:50}},required:['name'],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:({name,quantity=1})=>{const index=products.findIndex(p=>p.name.toLowerCase()===String(name).toLowerCase());if(index<0)throw new Error('Product not found');if(products[index].price<=0)throw new Error('This product needs a price before it can be added');for(let i=0;i<quantity;i++)addProduct(index);return {added:products[index].name,quantity,ticketTotal:cartTotal()}}});
   register({name:'complete_current_order',title:'Complete current order',description:'Register the current visible ticket as a new order after customer and payment fields have been set in the interface.',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:()=>{if(!cart.length)throw new Error('The ticket is empty');const orderNo=nextOrder;registerOrder();return {orderNumber:orderNo,status:'registered'}}});
 }
+/* Collapsible settings panels */
+function setupSettingsCollapsibles(){
+  const cards=Array.from(document.querySelectorAll('#view-settings .settings-grid > .content-card'));
+  cards.forEach(card=>{
+    if(card.dataset.collapsibleReady)return;
+    const heading=card.querySelector('h3');
+    if(!heading)return;
+    card.dataset.collapsibleReady='true';
+    card.classList.add('settings-collapsible','is-collapsed');
+    const toggle=document.createElement('button');
+    toggle.type='button';
+    toggle.className='settings-collapse-toggle';
+    toggle.setAttribute('aria-expanded','false');
+    toggle.setAttribute('aria-label','Expandir sección');
+    toggle.innerHTML='<span>Mostrar</span><i aria-hidden="true">⌄</i>';
+    const head=heading.closest('.settings-card-head');
+    (head||heading).appendChild(toggle);
+    const setCollapsed=collapsed=>{
+      card.classList.toggle('is-collapsed',collapsed);
+      toggle.setAttribute('aria-expanded',String(!collapsed));
+      toggle.setAttribute('aria-label',collapsed?'Expandir sección':'Comprimir sección');
+      toggle.querySelector('span').textContent=collapsed?'Mostrar':'Ocultar';
+    };
+    toggle.addEventListener('click',event=>{event.stopPropagation();setCollapsed(!card.classList.contains('is-collapsed'))});
+    if(head)head.addEventListener('click',event=>{
+      if(event.target.closest('button,input,select,label'))return;
+      setCollapsed(!card.classList.contains('is-collapsed'));
+    });
+    else heading.addEventListener('click',()=>setCollapsed(!card.classList.contains('is-collapsed')));
+  });
+}
+setupSettingsCollapsibles();
