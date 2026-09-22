@@ -66,7 +66,15 @@ async function printOrder(o){
   const cfg=qz.configs.create(printer,{encoding:'CP858'});
   const clean=v=>String(v??'').replace(/[\r\n]+/g,' ').trim();
   const lines=['\x1B\x40','\x1B\x61\x01','MALEFICA BURGER\n','Pedido #'+o.no+'\n',new Date(o.date).toLocaleString('es-UY')+'\n','\x1B\x61\x00','--------------------------------\n',clean(o.customer)+'\n',clean(o.type)+' - '+clean(o.source)+'\n','--------------------------------\n'];
-  o.items.forEach(x=>{lines.push(clean(x.qty+' x '+x.name)+'\n');(x.extras||[]).forEach(e=>lines.push(' + '+clean(e.name)+'\n'));lines.push('  
+  o.items.forEach(x=>{lines.push(clean(x.qty+' x '+x.name)+'\n');(x.extras||[]).forEach(e=>lines.push(' + '+clean(e.name)+'\n'));lines.push('  $'+Number(x.qty*x.price).toFixed(0)+'\n')});
+  lines.push('--------------------------------\n','TOTAL $'+Number(o.total).toFixed(0)+'\n',clean(o.paymentStatus)+' - '+clean(o.paymentMethod)+'\n');
+  if(o.obs)lines.push('Obs: '+clean(o.obs)+'\n');
+  lines.push('\n\n\n','\x1D\x56\x00');
+  await qz.print(cfg,[{type:'raw',format:'command',data:lines.join('')}]);
+  showToast('Ticket enviado a la impresora');
+ }catch(err){console.error('QZ Tray:',err);showToast('No se pudo imprimir con QZ Tray. Revisá la conexión y permisos.')}
+ finally{qzPrintBusy=false}
+}
 function renderStock(){const q=$('#stockSearch').value.trim().toLowerCase();const extraNames=new Set(extras.map(e=>e.name.trim().toLocaleLowerCase('es')));const list=stock.filter(s=>!extraNames.has(s.name.trim().toLocaleLowerCase('es'))&&s.name.toLowerCase().includes(q)&&(stockFilter==='all'||s.qty<=s.min));$('#stockList').innerHTML=list.length?list.map(s=>{const i=stock.indexOf(s),low=s.qty<=s.min;return `<div class="table-row"><span class="stock-name"><strong>${escapeHTML(s.name)}</strong><small>${products.some(p=>p.name===s.name)?'Producto del menú':'Insumo'}</small></span><input data-stock="qty" data-index="${i}" type="number" min="0" value="${s.qty}"><input data-stock="min" data-index="${i}" type="number" min="0" value="${s.min}"><span class="status-pill ${low?'low':'ok'}">${low?'REPONER':'OK'}</span><button type="button" class="icon-danger" data-stock-remove="${i}" aria-label="Quitar ${escapeHTML(s.name)} del stock" title="Quitar del stock">×</button></div>`}).join(''):`<div class="empty-state"><div><p>No hay resultados</p></div></div>`}
 function weekStart(date){const d=new Date(date+'T12:00:00'),day=d.getDay();d.setDate(d.getDate()+(day===0?-6:1-day));return d.toISOString().slice(0,10)}
 const shiftDate=(date,days)=>{const d=new Date(date+'T12:00:00');d.setDate(d.getDate()+days);return d.toISOString().slice(0,10)};
