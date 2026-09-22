@@ -243,3 +243,19 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:tex
   .settings-grid{grid-template-columns:1fr;gap:12px}
   #priceList,#orderProductList,#expenseCategoryList{max-height:none;overflow:visible;padding-right:0}
 }
+
+/* Secciones plegables de Ajustes */
+.settings-collapsible{position:relative;transition:border-color .16s,background .16s}
+.settings-collapse-toggle{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:34px;padding:0 10px;border:1px solid var(--line);border-radius:9px;background:var(--surface-2);color:var(--muted);font:inherit;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap}
+.settings-collapse-toggle:hover{border-color:var(--lime);color:var(--lime)}
+.settings-collapse-toggle i{font-style:normal;font-size:17px;line-height:1;transition:transform .18s}
+.settings-collapse-toggle[aria-expanded="true"] i{transform:rotate(180deg)}
+.settings-collapsible.is-collapsed{padding-top:14px;padding-bottom:14px}
+.settings-collapsible.is-collapsed>.settings-card-head{margin-bottom:0}
+.settings-collapsible.is-collapsed>.settings-card-head .secondary-action{display:none}
+.settings-collapsible.is-collapsed>:not(.settings-card-head):not(h3):not(.settings-collapse-toggle){display:none!important}
+.settings-collapsible>h3{margin:0;cursor:pointer}
+.settings-collapsible>h3+.settings-collapse-toggle{position:absolute;right:15px;top:11px}
+.settings-card-head{cursor:pointer}
+.settings-card-head .settings-collapse-toggle{margin-left:auto}
+@media(max-width:850px){.settings-collapse-toggle{min-height:36px}.settings-card-head .settings-collapse-toggle{align-self:center}}
