@@ -228,3 +228,18 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:tex
 .product-icon-choice:hover{border-color:var(--lime);transform:translateY(-1px)}
 .product-icon-choice.active{border-color:var(--lime);box-shadow:0 0 0 1px var(--lime);background:var(--lime-dark)}
 @media(max-width:420px){.product-icon-choices{gap:7px}.product-icon-choice{width:48px;height:50px;font-size:24px}}
+
+/* Ajustes: paneles compactos con listas independientes */
+#view-settings{max-width:1500px;margin:0 auto;padding-bottom:96px}
+.settings-grid{grid-template-columns:minmax(0,1.45fr) minmax(320px,.9fr);gap:18px;align-items:start}
+.settings-products{grid-row:auto!important}
+#priceList{max-height:min(65vh,680px);overflow-y:auto;scrollbar-gutter:stable;padding-right:5px}
+#orderProductList{max-height:420px;overflow-y:auto;scrollbar-gutter:stable;padding-right:4px}
+#expenseCategoryList{max-height:420px;overflow-y:auto;scrollbar-gutter:stable;padding-right:4px}
+.settings-grid>.content-card{min-width:0}
+.settings-card-head{margin-bottom:12px}
+@media(max-width:850px){
+  #view-settings{padding-bottom:88px}
+  .settings-grid{grid-template-columns:1fr;gap:12px}
+  #priceList,#orderProductList,#expenseCategoryList{max-height:none;overflow:visible;padding-right:0}
+}
