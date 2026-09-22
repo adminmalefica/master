@@ -270,3 +270,8 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:tex
 .new-product-image-preview img{width:45px;height:45px;border-radius:8px;object-fit:cover}
 
 .new-product-image-preview[hidden]{display:none!important}
+
+/* Chevron alineado para los paneles plegables */
+.settings-collapse-toggle{height:36px;line-height:1}
+.settings-collapse-toggle i{display:block;width:7px;height:7px;margin:-4px 1px 0 3px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);transition:transform .18s,margin .18s}
+.settings-collapse-toggle[aria-expanded="true"] i{margin:3px 1px 0 3px;transform:rotate(225deg)}
