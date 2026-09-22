@@ -131,22 +131,31 @@ function productIconOptions(category){
   return CATEGORY_ICON_OPTIONS[key]||[['🍔','Hamburguesa']];
 }
 function openNewProductModal(){
-  const cats=[...new Set(products.map(p=>p.cat).filter(Boolean))];
-  openModal(`<h2>Agregar producto</h2><form id="newProductForm" class="modal-form"><label>Nombre<input id="newProductName" required autocomplete="off"></label><label>Categoría<input id="newProductCategory" list="productCategories" required autocomplete="off"><datalist id="productCategories">${cats.map(c=>`<option value="${escapeHTML(c)}">`).join('')}</datalist></label><label id="newProductIconWrap">Logo del producto<select id="newProductIcon"></select><small class="muted" id="newProductIconHint"></small></label><label class="manual-price-check modal-check"><input id="newProductManual" type="checkbox"><span>Definir el precio al agregarlo al ticket</span></label><label id="newProductPriceWrap">Precio fijo<input id="newProductPrice" type="number" min="1" step="1" required></label><button class="primary-action" type="submit">Guardar producto</button></form>`);
-  const manual=$('#newProductManual'),price=$('#newProductPrice'),wrap=$('#newProductPriceWrap'),category=$('#newProductCategory'),icon=$('#newProductIcon'),iconHint=$('#newProductIconHint');
+  const savedCategories=[...new Set(products.map(p=>p.cat).filter(Boolean))];
+  const defaultCategories=['Hamburguesas','Combos','Bebidas','Papas','Entradas'];
+  const cats=[...new Set([...defaultCategories,...savedCategories])];
+  openModal(`<h2>Agregar producto</h2><form id="newProductForm" class="modal-form product-create-form"><label>Nombre<input id="newProductName" required autocomplete="off"></label><label>Categoría<select id="newProductCategory" required>${cats.map(c=>`<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join('')}</select></label><div id="newProductIconWrap" class="new-product-icon-wrap" aria-label="Ícono del producto"></div><label class="manual-price-check modal-check"><input id="newProductManual" type="checkbox"><span>Definir el precio al agregarlo al ticket</span></label><label id="newProductPriceWrap">Precio fijo<input id="newProductPrice" type="number" min="1" step="1" required></label><button class="primary-action" type="submit">Guardar producto</button></form>`);
+  const manual=$('#newProductManual'),price=$('#newProductPrice'),wrap=$('#newProductPriceWrap'),category=$('#newProductCategory'),iconWrap=$('#newProductIconWrap');
+  let selectedProductIcon='';
   const renderIconOptions=()=>{
     const options=productIconOptions(category.value);
-    icon.innerHTML=options.map(([value,label])=>`<option value="${value}">${value} ${label}</option>`).join('');
-    iconHint.textContent=options.length===1?`Se usará el ícono de ${options[0][1].toLowerCase()}.`:'Elegí el ícono que representa este producto.';
+    if(!options.some(([value])=>value===selectedProductIcon))selectedProductIcon=options[0][0];
+    if(options.length===1){
+      iconWrap.innerHTML=`<div class="product-icon-fixed" title="${escapeHTML(options[0][1])}"><span>${options[0][0]}</span></div>`;
+      return;
+    }
+    iconWrap.innerHTML=`<div class="product-icon-choices" role="radiogroup" aria-label="Elegí el ícono">${options.map(([value,label])=>`<button type="button" class="product-icon-choice ${value===selectedProductIcon?'active':''}" data-product-icon="${escapeHTML(value)}" title="${escapeHTML(label)}" aria-label="${escapeHTML(label)}" aria-pressed="${value===selectedProductIcon}">${value}</button>`).join('')}</div>`;
   };
-  category.addEventListener('input',renderIconOptions);renderIconOptions();
+  category.addEventListener('change',renderIconOptions);
+  iconWrap.addEventListener('click',e=>{const button=e.target.closest('[data-product-icon]');if(!button)return;selectedProductIcon=button.dataset.productIcon;renderIconOptions()});
+  renderIconOptions();
   manual.onchange=()=>{price.disabled=manual.checked;price.required=!manual.checked;wrap.classList.toggle('disabled-field',manual.checked)};
   $('#newProductForm').onsubmit=e=>{
     e.preventDefault();
-    const name=$('#newProductName').value.trim(),cat=category.value.trim(),manualPrice=manual.checked,priceValue=manualPrice?0:Number(price.value);
+    const name=$('#newProductName').value.trim(),cat=category.value,manualPrice=manual.checked,priceValue=manualPrice?0:Number(price.value);
     if(!name||!cat||(!manualPrice&&priceValue<=0))return;
     if(products.some(p=>p.name.toLowerCase()===name.toLowerCase()))return showToast('Ya existe un producto con ese nombre');
-    products.push({name,cat,price:priceValue,manualPrice,desc:'',emoji:icon.value||productIconOptions(cat)[0][0]});
+    products.push({name,cat,price:priceValue,manualPrice,desc:'',emoji:selectedProductIcon||productIconOptions(cat)[0][0]});
     stock.push({name,qty:20,min:5,cost:0});save();closeModal();renderSettings();renderCategories();renderProducts();showToast('Producto agregado');
   };
 }
