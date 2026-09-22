@@ -275,3 +275,13 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:tex
 .settings-collapse-toggle{height:36px;line-height:1}
 .settings-collapse-toggle i{display:block;width:7px;height:7px;margin:-4px 1px 0 3px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);transition:transform .18s,margin .18s}
 .settings-collapse-toggle[aria-expanded="true"] i{margin:3px 1px 0 3px;transform:rotate(225deg)}
+
+/* Evita mostrar el login antes de comprobar la sesión */
+.auth-pending .auth-gate,.auth-pending .app-shell{visibility:hidden}
+.auth-loading{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--bg);color:var(--text);font-size:14px;font-weight:750;letter-spacing:.01em}
+.auth-loading[hidden]{display:none}
+.auth-loading-mark{display:grid;place-items:center;width:58px;height:58px;border-radius:18px;background:var(--orange);color:#171217;font-size:28px;font-weight:950;transform:rotate(-6deg);animation:auth-loading-bob 1.1s ease-in-out infinite}
+.auth-loading i{width:112px;height:3px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.auth-loading i:after{content:"";display:block;width:42%;height:100%;border-radius:inherit;background:var(--orange);animation:auth-loading-progress 1s ease-in-out infinite}
+@keyframes auth-loading-bob{50%{transform:rotate(6deg) translateY(-5px)}}
+@keyframes auth-loading-progress{0%{transform:translateX(-105%)}100%{transform:translateX(250%)}}
