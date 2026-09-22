@@ -289,3 +289,9 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:tex
 /* La marca de carga replica el logo de navegación */
 .auth-loading-mark{width:38px;height:38px;border-radius:12px;background:var(--lime);color:#101010;font-size:20px;transform:rotate(-4deg);animation:auth-loading-brand 1.1s ease-in-out infinite}
 @keyframes auth-loading-brand{50%{transform:rotate(4deg) translateY(-4px)}}
+
+/* Precio manual: checkbox compacto y texto alineado */
+.manual-price-check.modal-check{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:9px!important;width:100%!important;max-width:100%;min-height:24px;margin:4px 0!important;padding:2px 0!important;cursor:pointer}
+.manual-price-check.modal-check input[type="checkbox"]{appearance:auto!important;-webkit-appearance:checkbox!important;display:block!important;box-sizing:border-box!important;width:18px!important;height:18px!important;min-width:18px!important;min-height:18px!important;flex:0 0 18px!important;margin:0!important;padding:0!important;accent-color:var(--orange)}
+.manual-price-check.modal-check span{display:block!important;min-width:0;flex:0 1 auto!important;margin:0!important;padding:0!important;color:var(--text);font-size:13px;line-height:1.32;text-align:left}
+@media(max-width:850px){.manual-price-check.modal-check{gap:8px!important}.manual-price-check.modal-check span{font-size:13px}}
