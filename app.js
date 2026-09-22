@@ -265,7 +265,7 @@ function setupSettingsCollapsibles(){
     toggle.className='settings-collapse-toggle';
     toggle.setAttribute('aria-expanded','false');
     toggle.setAttribute('aria-label','Expandir sección');
-    toggle.innerHTML='<span>Mostrar</span><i aria-hidden="true">⌄</i>';
+    toggle.innerHTML='<span>Mostrar</span><i aria-hidden="true"></i>';
     const head=heading.closest('.settings-card-head');
     (head||heading).appendChild(toggle);
     const setCollapsed=collapsed=>{
