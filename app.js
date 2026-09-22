@@ -119,7 +119,37 @@ document.addEventListener('click',e=>{if(!e.target.closest('#orderProductList'))
  save();renderProductOrdering();renderProducts();renderSettings();showToast('Orden actualizado');
 });
 function renderExpenseCategoryOptions(){const select=$('#expenseCategory'),current=select.value;select.innerHTML=expenseCategories.map(x=>`<option>${escapeHTML(x)}</option>`).join('');if(expenseCategories.includes(current))select.value=current}
-function openNewProductModal(){const cats=[...new Set(products.map(p=>p.cat).filter(Boolean))];openModal(`<h2>Agregar producto</h2><form id="newProductForm" class="modal-form"><label>Nombre<input id="newProductName" required autocomplete="off"></label><label>Categoría<input id="newProductCategory" list="productCategories" required autocomplete="off"><datalist id="productCategories">${cats.map(c=>`<option value="${escapeHTML(c)}">`).join('')}</datalist></label><label class="manual-price-check modal-check"><input id="newProductManual" type="checkbox"><span>Definir el precio al agregarlo al ticket</span></label><label id="newProductPriceWrap">Precio fijo<input id="newProductPrice" type="number" min="1" step="1" required></label><button class="primary-action" type="submit">Guardar producto</button></form>`);const manual=$('#newProductManual'),price=$('#newProductPrice'),wrap=$('#newProductPriceWrap');manual.onchange=()=>{price.disabled=manual.checked;price.required=!manual.checked;wrap.classList.toggle('disabled-field',manual.checked)};$('#newProductForm').onsubmit=e=>{e.preventDefault();const name=$('#newProductName').value.trim(),cat=$('#newProductCategory').value.trim(),manualPrice=manual.checked,priceValue=manualPrice?0:Number(price.value);if(!name||!cat||(!manualPrice&&priceValue<=0))return;if(products.some(p=>p.name.toLowerCase()===name.toLowerCase()))return showToast('Ya existe un producto con ese nombre');products.push({name,cat,price:priceValue,manualPrice,desc:'',emoji:'🍔'});stock.push({name,qty:20,min:5,cost:0});save();closeModal();renderSettings();renderCategories();renderProducts();showToast('Producto agregado')}}
+const CATEGORY_ICON_OPTIONS={
+  hamburguesas:[['🍔','Hamburguesa']],
+  combos:[['🍔🍟','Hamburguesa y papas']],
+  bebidas:[['💧','Agua'],['🥤','Cola'],['🧃','Jugo'],['🍺','Cerveza']],
+  papas:[['🍟','Papas fritas']],
+  entradas:[['🧅','Aros de cebolla'],['🧀','Bastones de queso'],['🍗','Nuggets'],['🌭','Panchos'],['🥟','Empanadas']]
+};
+function productIconOptions(category){
+  const key=String(category||'').trim().toLowerCase();
+  return CATEGORY_ICON_OPTIONS[key]||[['🍔','Hamburguesa']];
+}
+function openNewProductModal(){
+  const cats=[...new Set(products.map(p=>p.cat).filter(Boolean))];
+  openModal(`<h2>Agregar producto</h2><form id="newProductForm" class="modal-form"><label>Nombre<input id="newProductName" required autocomplete="off"></label><label>Categoría<input id="newProductCategory" list="productCategories" required autocomplete="off"><datalist id="productCategories">${cats.map(c=>`<option value="${escapeHTML(c)}">`).join('')}</datalist></label><label id="newProductIconWrap">Logo del producto<select id="newProductIcon"></select><small class="muted" id="newProductIconHint"></small></label><label class="manual-price-check modal-check"><input id="newProductManual" type="checkbox"><span>Definir el precio al agregarlo al ticket</span></label><label id="newProductPriceWrap">Precio fijo<input id="newProductPrice" type="number" min="1" step="1" required></label><button class="primary-action" type="submit">Guardar producto</button></form>`);
+  const manual=$('#newProductManual'),price=$('#newProductPrice'),wrap=$('#newProductPriceWrap'),category=$('#newProductCategory'),icon=$('#newProductIcon'),iconHint=$('#newProductIconHint');
+  const renderIconOptions=()=>{
+    const options=productIconOptions(category.value);
+    icon.innerHTML=options.map(([value,label])=>`<option value="${value}">${value} ${label}</option>`).join('');
+    iconHint.textContent=options.length===1?`Se usará el ícono de ${options[0][1].toLowerCase()}.`:'Elegí el ícono que representa este producto.';
+  };
+  category.addEventListener('input',renderIconOptions);renderIconOptions();
+  manual.onchange=()=>{price.disabled=manual.checked;price.required=!manual.checked;wrap.classList.toggle('disabled-field',manual.checked)};
+  $('#newProductForm').onsubmit=e=>{
+    e.preventDefault();
+    const name=$('#newProductName').value.trim(),cat=category.value.trim(),manualPrice=manual.checked,priceValue=manualPrice?0:Number(price.value);
+    if(!name||!cat||(!manualPrice&&priceValue<=0))return;
+    if(products.some(p=>p.name.toLowerCase()===name.toLowerCase()))return showToast('Ya existe un producto con ese nombre');
+    products.push({name,cat,price:priceValue,manualPrice,desc:'',emoji:icon.value||productIconOptions(cat)[0][0]});
+    stock.push({name,qty:20,min:5,cost:0});save();closeModal();renderSettings();renderCategories();renderProducts();showToast('Producto agregado');
+  };
+}
 function removeProductSetting(index){const p=products[index];if(!p)return;openConfirm({title:`Eliminar ${p.name}`,message:'Se quitará del menú y del stock. Las ventas anteriores se conservarán.',confirmText:'Sí, eliminar',onConfirm:()=>{products.splice(index,1);stock=stock.filter(s=>s.name!==p.name);cart=cart.filter(x=>x.productIndex!==index).map(x=>({...x,productIndex:x.productIndex>index?x.productIndex-1:x.productIndex}));if(activeCategory!=='Todos'&&!products.some(x=>x.cat===activeCategory))activeCategory='Todos';save();renderSettings();renderCategories();renderProducts();renderCart();showToast('Producto eliminado')}})}
 function openExpenseCategoryModal(){openModal(`<h2>Agregar categoría de gasto</h2><form id="newExpenseCategoryForm" class="modal-form"><label>Nombre<input id="newExpenseCategoryName" required autocomplete="off"></label><button class="primary-action" type="submit">Guardar categoría</button></form>`);$('#newExpenseCategoryForm').onsubmit=e=>{e.preventDefault();const name=$('#newExpenseCategoryName').value.trim();if(!name)return;if(expenseCategories.some(c=>c.toLowerCase()===name.toLowerCase()))return showToast('La categoría ya existe');expenseCategories.push(name);save();closeModal();renderSettings();showToast('Categoría agregada')}}
 function removeExpenseCategory(index){const name=expenseCategories[index];if(!name)return;if(expenseCategories.length===1)return showToast('Debe quedar al menos una categoría');openConfirm({title:`Eliminar ${name}`,message:'Dejará de aparecer en nuevos gastos. Los gastos anteriores se conservarán.',confirmText:'Sí, eliminar',onConfirm:()=>{expenseCategories.splice(index,1);save();renderSettings();showToast('Categoría eliminada')}})}
