@@ -44,7 +44,16 @@ function normalizeStock(){
 function cloudState(){return{products,stock,hiddenStock,sales,pending,expenses,expenseCategories,extras,nextOrder,updatedAt:Date.now()}}
 function pushCloudState(){if(cloudReady&&!applyingCloud)masterDb.ref('master/state').set(cloudState()).catch(e=>console.error('Firebase:',e))}
 function applyCloudState(data){if(!data)return false;applyingCloud=true;products=Array.isArray(data.products)?data.products:products;stock=Array.isArray(data.stock)?data.stock:stock;hiddenStock=Array.isArray(data.hiddenStock)?data.hiddenStock:hiddenStock;localStorage.setItem('master_hidden_stock',JSON.stringify(hiddenStock));sales=Array.isArray(data.sales)?data.sales:[];pending=Array.isArray(data.pending)?data.pending:[];expenses=Array.isArray(data.expenses)?data.expenses:[];expenseCategories=Array.isArray(data.expenseCategories)?data.expenseCategories:expenseCategories;extras=Array.isArray(data.extras)?data.extras:extras;nextOrder=Number(data.nextOrder||nextOrder);applyingCloud=false;return true}
-function refreshCloudUI(){$('input[type="date"]').forEach(input=>input.addEventListener('click',()=>{try{input.showPicker?.()}catch{}}));
+function refreshCloudUI(){$('.date-field').forEach(field=>{
+  const input=field.querySelector('input[type="date"]');
+  if(!input||field.dataset.pickerBound)return;
+  field.dataset.pickerBound='true';
+  field.addEventListener('pointerdown',event=>{
+    if(event.button!==undefined&&event.button!==0)return;
+    try{input.showPicker();event.preventDefault()}catch{input.focus()}
+  });
+  input.addEventListener('click',()=>{try{input.showPicker()}catch{}});
+});
 normalizeStock();renderCategories();renderProducts();renderCart();updateHeader();renderOrders();if($('#view-stock').classList.contains('active'))renderStock();if($('#view-sales').classList.contains('active'))renderSales();if($('#view-expenses').classList.contains('active'))renderExpenses();if($('#view-settings').classList.contains('active'))renderSettings()}
 function startCloud(){if(cloudStarted)return;cloudStarted=true;const ref=masterDb.ref('master/state');ref.once('value').then(s=>{cloudReady=true;if(s.exists())applyCloudState(s.val());else pushCloudState();refreshCloudUI();ref.on('value',snap=>{if(!snap.exists())return;applyCloudState(snap.val());refreshCloudUI()})}).catch(e=>{$('#authError').textContent='No se pudo conectar con Firebase.';console.error(e)})}
 masterAuth.onAuthStateChanged(user=>{if(user&&user.email===MASTER_ADMIN_EMAIL){$('#authGate').hidden=true;startCloud()}else if(user){masterAuth.signOut();$('#authError').textContent='Este correo no tiene acceso al Máster.'}});$('#authForm').addEventListener('submit',async e=>{e.preventDefault();const error=$('#authError');error.textContent='Ingresando…';try{await masterAuth.signInWithEmailAndPassword($('#authEmail').value.trim(),$('#authPassword').value);error.textContent=''}catch{error.textContent='Correo o contraseña incorrectos.'}});
