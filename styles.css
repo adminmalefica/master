@@ -285,3 +285,7 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:tex
 .auth-loading i:after{content:"";display:block;width:42%;height:100%;border-radius:inherit;background:var(--orange);animation:auth-loading-progress 1s ease-in-out infinite}
 @keyframes auth-loading-bob{50%{transform:rotate(6deg) translateY(-5px)}}
 @keyframes auth-loading-progress{0%{transform:translateX(-105%)}100%{transform:translateX(250%)}}
+
+/* La marca de carga replica el logo de navegación */
+.auth-loading-mark{width:38px;height:38px;border-radius:12px;background:var(--lime);color:#101010;font-size:20px;transform:rotate(-4deg);animation:auth-loading-brand 1.1s ease-in-out infinite}
+@keyframes auth-loading-brand{50%{transform:rotate(4deg) translateY(-4px)}}
