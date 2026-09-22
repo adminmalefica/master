@@ -217,3 +217,14 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:tex
 .product-drag-handle{position:absolute;top:7px;right:7px;z-index:5;display:grid;grid-template-columns:repeat(2,3px);gap:3px;padding:8px;border-radius:8px;background:rgba(13,11,16,.88);pointer-events:none}
 .product-drag-handle i{display:block;width:3px;height:3px;border-radius:50%;background:var(--lime)}
 @media(max-width:850px){.catalog-tools{gap:6px}.product-order-toggle{width:38px;height:38px}}
+
+/* Modal de producto: categoría e ícono claros y táctiles */
+.product-create-form #newProductCategory{width:100%;height:47px;margin-top:5px;padding:0 12px;border:1px solid var(--line);border-radius:11px;background:var(--surface-2);color:var(--text);font:inherit;outline:0}
+.product-create-form #newProductCategory:focus{border-color:var(--lime)}
+.new-product-icon-wrap{min-height:62px;display:flex;align-items:center}
+.product-icon-fixed{display:grid;place-items:center;width:54px;height:54px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2);font-size:29px}
+.product-icon-choices{display:flex;gap:9px;align-items:center}
+.product-icon-choice{display:grid;place-items:center;width:54px;height:54px;padding:0;border:1px solid var(--line);border-radius:14px;background:var(--surface-2);font-size:27px;cursor:pointer;transition:.15s}
+.product-icon-choice:hover{border-color:var(--lime);transform:translateY(-1px)}
+.product-icon-choice.active{border-color:var(--lime);box-shadow:0 0 0 1px var(--lime);background:var(--lime-dark)}
+@media(max-width:420px){.product-icon-choices{gap:7px}.product-icon-choice{width:48px;height:50px;font-size:24px}}
