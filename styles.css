@@ -325,3 +325,25 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:tex
   .sales-advanced-row input[type="date"],
   .sales-advanced-row select{display:block;width:100%;min-width:0;max-width:100%;box-sizing:border-box}
 }
+/* Caja compacta en mobile */
+@media(max-width:850px){
+  .catalog-panel .product-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+  .catalog-panel .product-card{border-radius:10px}
+  .catalog-panel .product-image,
+  .catalog-panel .product-placeholder{height:72px;aspect-ratio:auto}
+  .catalog-panel .product-placeholder{font-size:27px}
+  .catalog-panel .product-info{padding:6px 7px 7px}
+  .catalog-panel .product-info h3{font-size:11px;line-height:1.15;margin-bottom:3px}
+  .catalog-panel .product-price{font-size:11px}
+  .catalog-panel .product-stock{display:none}
+  .catalog-panel .add-mark{width:20px;height:20px;border-radius:6px;font-size:14px}
+  .catalog-panel .card-stepper{height:22px;border-radius:6px}
+  .catalog-panel .card-stepper button{width:21px;height:22px}
+  .catalog-panel .card-stepper strong{min-width:15px;font-size:11px}
+}
+@media(max-width:380px){
+  .catalog-panel .product-image,
+  .catalog-panel .product-placeholder{height:64px}
+  .catalog-panel .product-info{padding:5px 6px 6px}
+  .catalog-panel .product-info h3{font-size:10px}
+}
