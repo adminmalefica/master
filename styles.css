@@ -306,3 +306,16 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:tex
 .discount-options button:hover,.discount-options button.active{border-color:var(--orange);background:rgba(255,149,28,.12);color:var(--orange)}
 .order-discount{display:flex;justify-content:space-between;gap:10px;margin:10px 0 0;padding:9px 0;border-top:1px dashed var(--line);color:var(--orange);font-size:13px;font-weight:800}
 @media(max-width:850px){.ticket-payment-actions{gap:8px}.discount-button{min-height:32px;padding:0 10px}.order-actions [data-order="discount"]{width:100%}}
+
+/* Filtros rápidos de ventas */
+.sales-period{flex-wrap:wrap}
+.sales-advanced-row{display:flex;gap:14px;align-items:flex-end}
+.sales-advanced-row .date-field{min-width:148px}
+.sales-advanced>.date-field{min-width:180px}
+@media(max-width:850px){
+  .sales-period{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .sales-period .sales-today{min-width:0;padding:0 8px;font-size:12px}
+  .sales-advanced-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .sales-advanced-row .date-field{min-width:0}
+  .sales-advanced>.date-field{display:block;min-width:0;margin-top:10px}
+}
