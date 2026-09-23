@@ -47,11 +47,10 @@ function applyCloudState(data){if(!data)return false;applyingCloud=true;products
 function refreshCloudUI(){Array.from(document.querySelectorAll('input[type="date"]')).forEach(input=>{
   if(input.dataset.pickerBound)return;
   input.dataset.pickerBound='true';
-  input.addEventListener('pointerdown',event=>{
-    if(event.button!==undefined&&event.button!==0)return;
-    try{input.showPicker();event.preventDefault()}catch{input.focus()}
+  input.addEventListener('click',event=>{
+    if(event.detail===0)return;
+    try{input.showPicker()}catch{input.focus()}
   });
-  input.addEventListener('click',()=>{try{input.showPicker()}catch{}});
 });
 normalizeStock();renderCategories();renderProducts();renderCart();updateHeader();renderOrders();if($('#view-stock').classList.contains('active'))renderStock();if($('#view-sales').classList.contains('active'))renderSales();if($('#view-expenses').classList.contains('active'))renderExpenses();if($('#view-settings').classList.contains('active'))renderSettings()}
 function startCloud(){if(cloudStarted)return;cloudStarted=true;const ref=masterDb.ref('master/state');ref.once('value').then(s=>{cloudReady=true;if(s.exists())applyCloudState(s.val());else pushCloudState();refreshCloudUI();ref.on('value',snap=>{if(!snap.exists())return;applyCloudState(snap.val());refreshCloudUI()})}).catch(e=>{$('#authError').textContent='No se pudo conectar con Firebase.';console.error(e)})}
