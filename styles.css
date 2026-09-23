@@ -319,3 +319,9 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:tex
   .sales-advanced-row .date-field{min-width:0}
   .sales-advanced>.date-field{display:block;min-width:0;margin-top:10px}
 }
+@media(max-width:850px){
+  .sales-advanced-row{min-width:0;width:100%;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .sales-advanced-row .date-field{min-width:0;width:100%}
+  .sales-advanced-row input[type="date"],
+  .sales-advanced-row select{display:block;width:100%;min-width:0;max-width:100%;box-sizing:border-box}
+}
