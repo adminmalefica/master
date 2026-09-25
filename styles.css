@@ -377,3 +377,7 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:tex
 .combo-burger-extra-panel{display:grid;gap:7px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
 .combo-burger-extra-panel+.combo-burger-extra-panel{margin-top:9px}
 .combo-burger-extra-panel h3{margin:0 0 2px;font-size:13px;color:var(--text)}
+
+/* Evita que los iconos compuestos de combos se partan en dos líneas */
+.product-icon-fixed,.product-icon-choice{white-space:nowrap;line-height:1;letter-spacing:-4px;font-size:24px}
+@media(max-width:420px){.product-icon-fixed,.product-icon-choice{letter-spacing:-4px;font-size:22px}}
