@@ -69,7 +69,31 @@ function addProduct(index,skipStockCheck=false){
   addCartLine(index,p.price,[]);
 }
 function addCartLine(index,basePrice,selectedExtras=[]){const p=products[index],extraTotal=selectedExtras.reduce((sum,x)=>sum+Number(x.price),0),price=Number(basePrice)+extraTotal,key=selectedExtras.map(x=>x.name).sort().join('|'),line=cart.find(x=>x.productIndex===index&&x.price===price&&(x.extrasKey||'')===key);line?line.qty++:cart.push({productIndex:index,name:p.name,price,basePrice:Number(basePrice),extras:selectedExtras,extrasKey:key,qty:1});renderCart()}
-function openBurgerExtras(index){const p=products[index],manual=p.manualPrice||p.price<=0;openModal(`<h2>${escapeHTML(p.name)}</h2><form id="burgerExtrasForm" class="modal-form">${manual?'<label>Precio base<input id="burgerBasePrice" type="number" min="1" step="1" required autofocus></label>':''}<div class="extras-picker"><span>Agregar extras</span>${extras.length?extras.map((x,i)=>`<label><input type="checkbox" data-extra-index="${i}"><span>${escapeHTML(x.name)}</span><b>+${money(x.price)}</b></label>`).join(''):'<p class="muted">No hay extras configurados.</p>'}</div><button class="primary-action" type="submit">Agregar al ticket</button></form>`);$('#burgerExtrasForm').onsubmit=e=>{e.preventDefault();const basePrice=manual?Number($('#burgerBasePrice').value):Number(p.price);if(basePrice<=0)return;const selected=Array.from(document.querySelectorAll('[data-extra-index]:checked')).map(el=>({...extras[Number(el.dataset.extraIndex)]}));const plainLine=cart.find(x=>x.productIndex===index&&!(x.extras?.length));if(plainLine){plainLine.qty--;if(plainLine.qty<=0)cart.splice(cart.indexOf(plainLine),1)}addCartLine(index,basePrice,selected);closeModal()}}
+function openBurgerExtras(index){
+  const p=products[index],manual=p.manualPrice||p.price<=0,isCombo=String(p.cat).toLowerCase()==='combos';
+  openModal(`<h2>${escapeHTML(p.name)}</h2><form id="burgerExtrasForm" class="modal-form">${manual?'<label>Precio base<input id="burgerBasePrice" type="number" min="1" step="1" required autofocus></label>':''}${isCombo?'<fieldset class="combo-extra-target"><legend>¿A cuántas hamburguesas del combo?</legend><label><input type="radio" name="comboExtraTarget" value="1" checked> Una hamburguesa</label><label><input type="radio" name="comboExtraTarget" value="2"> Las dos hamburguesas</label></fieldset>':''}<div class="extras-picker"><span>Agregar extras</span>${extras.length?extras.map((x,i)=>`<div class="extra-quantity-row"><span><b>${escapeHTML(x.name)}</b><small>+${money(x.price)} c/u</small></span><div class="extra-quantity-controls"><button type="button" data-extra-qty-action="minus" data-extra-qty-index="${i}" aria-label="Quitar ${escapeHTML(x.name)}">−</button><input class="extra-qty-input" data-extra-qty="${i}" type="number" min="0" inputmode="numeric" value="0" aria-label="Cantidad de ${escapeHTML(x.name)}"><button type="button" data-extra-qty-action="plus" data-extra-qty-index="${i}" aria-label="Agregar ${escapeHTML(x.name)}">+</button></div></div>`).join(''):'<p class="muted">No hay extras configurados.</p>'}</div><button class="primary-action" type="submit">Agregar al ticket</button></form>`);
+  const form=$('#burgerExtrasForm');
+  form.addEventListener('click',event=>{
+    const button=event.target.closest('[data-extra-qty-action]');if(!button)return;
+    const input=form.querySelector('[data-extra-qty="'+button.dataset.extraQtyIndex+'"]');
+    if(!input)return;
+    const delta=button.dataset.extraQtyAction==='plus'?1:-1;
+    input.value=Math.max(0,Number(input.value||0)+delta);
+  });
+  form.onsubmit=e=>{
+    e.preventDefault();
+    const basePrice=manual?Number($('#burgerBasePrice').value):Number(p.price);if(basePrice<=0)return;
+    const targetCount=isCombo?Number(form.querySelector('input[name="comboExtraTarget"]:checked')?.value||1):1;
+    const selected=Array.from(form.querySelectorAll('[data-extra-qty]')).flatMap(input=>{
+      const quantity=Math.max(0,Math.floor(Number(input.value)||0))*targetCount,extra=extras[Number(input.dataset.extraQty)];
+      return extra?Array.from({length:quantity},()=>({...extra})):[];
+    });
+    if(!selected.length){showToast('Elegí al menos un extra');return}
+    const plainLine=cart.find(x=>x.productIndex===index&&!(x.extras?.length));
+    if(plainLine){plainLine.qty--;if(plainLine.qty<=0)cart.splice(cart.indexOf(plainLine),1)}
+    addCartLine(index,basePrice,selected);closeModal();
+  };
+}
 function changeProductQty(index,delta){if(delta>0)return addProduct(index);const lineIndex=cart.findIndex(x=>x.productIndex===index);if(lineIndex<0)return;cart[lineIndex].qty--;if(cart[lineIndex].qty<=0)cart.splice(lineIndex,1);renderCart()}
 function askVariablePrice(index){const p=products[index];openModal(`<h2>Precio de ${escapeHTML(p.name)}</h2><form id="priceModalForm" class="modal-form"><label>Precio para este pedido<input id="variablePrice" type="number" min="1" step="1" placeholder="$ 0" autofocus required></label><button class="primary-action" type="submit">Agregar al ticket</button></form>`);$('#priceModalForm').onsubmit=e=>{e.preventDefault();const price=Number($('#variablePrice').value);if(price<=0)return;addCartLine(index,price,[]);closeModal()}}
 function cartSubtotal(){return cart.reduce((sum,x)=>sum+x.price*x.qty,0)}
