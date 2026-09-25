@@ -91,7 +91,7 @@ function openBurgerExtras(index){
     if(!selected.length){showToast('Elegí al menos un extra');return}
     const plainLine=cart.find(x=>x.productIndex===index&&!(x.extras?.length));
     if(plainLine){plainLine.qty--;if(plainLine.qty<=0)cart.splice(cart.indexOf(plainLine),1)}
-    addCartLine(index,basePrice,selected);closeModal();
+    addCartLine(index,basePrice,selected,targetCount);closeModal();
   };
 }
 function editCartExtras(lineIndex){
