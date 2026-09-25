@@ -364,3 +364,11 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:tex
 @media(max-width:850px){
   .card-extra-btn{top:5px;right:5px;height:24px;padding:0 7px;border-radius:7px;font-size:9px}
 }
+/* Botón de extras separado del contador */
+.card-extra-btn{top:7px;left:7px;right:auto}
+.card-extra-symbol{display:none}
+@media(max-width:850px){
+  .catalog-panel .card-extra-btn{top:5px;left:5px;right:auto;width:24px;height:24px;padding:0;display:grid;place-items:center}
+  .catalog-panel .card-extra-label{display:none}
+  .catalog-panel .card-extra-symbol{display:block;font-size:17px;line-height:1}
+}
