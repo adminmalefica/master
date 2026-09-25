@@ -71,27 +71,26 @@ function addProduct(index,skipStockCheck=false){
 function addCartLine(index,basePrice,selectedExtras=[],extraTargetCount=1){const p=products[index],targetCount=Math.max(1,Number(extraTargetCount)||1),extraTotal=selectedExtras.reduce((sum,x)=>sum+Number(x.price),0),price=Number(basePrice)+extraTotal,key=selectedExtras.map(x=>x.name).sort().join('|')+'|t'+targetCount,line=cart.find(x=>x.productIndex===index&&x.price===price&&(x.extrasKey||'')===key);line?line.qty++:cart.push({productIndex:index,name:p.name,price,basePrice:Number(basePrice),extras:selectedExtras,extraTargetCount:targetCount,extrasKey:key,qty:1});renderCart()}
 function openBurgerExtras(index){
   const p=products[index],manual=p.manualPrice||p.price<=0,isCombo=String(p.cat).toLowerCase()==='combos';
-  openModal(`<h2>${escapeHTML(p.name)}</h2><form id="burgerExtrasForm" class="modal-form">${manual?'<label>Precio base<input id="burgerBasePrice" type="number" min="1" step="1" required autofocus></label>':''}${isCombo?'<fieldset class="combo-extra-target"><legend>¿A cuántas hamburguesas del combo?</legend><label><input type="radio" name="comboExtraTarget" value="1" checked> Una hamburguesa</label><label><input type="radio" name="comboExtraTarget" value="2"> Las dos hamburguesas</label></fieldset>':''}<div class="extras-picker"><span>Agregar extras</span>${extras.length?extras.map((x,i)=>`<div class="extra-quantity-row"><span><b>${escapeHTML(x.name)}</b><small>+${money(x.price)} c/u</small></span><div class="extra-quantity-controls"><button type="button" data-extra-qty-action="minus" data-extra-qty-index="${i}" aria-label="Quitar ${escapeHTML(x.name)}">−</button><input class="extra-qty-input" data-extra-qty="${i}" type="number" min="0" inputmode="numeric" value="0" aria-label="Cantidad de ${escapeHTML(x.name)}"><button type="button" data-extra-qty-action="plus" data-extra-qty-index="${i}" aria-label="Agregar ${escapeHTML(x.name)}">+</button></div></div>`).join(''):'<p class="muted">No hay extras configurados.</p>'}</div><button class="primary-action" type="submit">Agregar al ticket</button></form>`);
+  const panel=burger=>`<div class="combo-burger-extra-panel">${isCombo?`<h3>Hamburguesa ${burger}</h3>`:''}${extras.map((x,i)=>`<div class="extra-quantity-row"><span><b>${escapeHTML(x.name)}</b><small>+${money(x.price)} c/u</small></span><div class="extra-quantity-controls"><button type="button" data-extra-qty-action="minus" data-extra-qty-index="${i}" data-extra-burger="${burger}">−</button><input class="extra-qty-input" data-extra-qty="${i}" data-extra-burger="${burger}" type="number" min="0" inputmode="numeric" value="0" aria-label="Cantidad de ${escapeHTML(x.name)}"><button type="button" data-extra-qty-action="plus" data-extra-qty-index="${i}" data-extra-burger="${burger}">+</button></div></div>`).join('')}</div>`;
+  openModal(`<h2>${escapeHTML(p.name)}</h2><form id="burgerExtrasForm" class="modal-form">${manual?'<label>Precio base<input id="burgerBasePrice" type="number" min="1" step="1" required autofocus></label>':''}<div class="extras-picker"><span>${isCombo?'Configurá cada hamburguesa por separado':'Agregar extras'}</span>${extras.length?(isCombo?panel(1)+panel(2):panel(0)):'<p class="muted">No hay extras configurados.</p>'}</div><button class="primary-action" type="submit">Agregar al ticket</button></form>`);
   const form=$('#burgerExtrasForm');
   form.addEventListener('click',event=>{
     const button=event.target.closest('[data-extra-qty-action]');if(!button)return;
-    const input=form.querySelector('[data-extra-qty="'+button.dataset.extraQtyIndex+'"]');
-    if(!input)return;
-    const delta=button.dataset.extraQtyAction==='plus'?1:-1;
-    input.value=Math.max(0,Number(input.value||0)+delta);
+    const selector='[data-extra-qty="'+button.dataset.extraQtyIndex+'"][data-extra-burger="'+button.dataset.extraBurger+'"]';
+    const input=form.querySelector(selector);if(!input)return;
+    input.value=Math.max(0,Number(input.value||0)+(button.dataset.extraQtyAction==='plus'?1:-1));
   });
   form.onsubmit=e=>{
     e.preventDefault();
     const basePrice=manual?Number($('#burgerBasePrice').value):Number(p.price);if(basePrice<=0)return;
-    const targetCount=isCombo?Number(form.querySelector('input[name="comboExtraTarget"]:checked')?.value||1):1;
     const selected=Array.from(form.querySelectorAll('[data-extra-qty]')).flatMap(input=>{
-      const quantity=Math.max(0,Math.floor(Number(input.value)||0))*targetCount,extra=extras[Number(input.dataset.extraQty)];
-      return extra?Array.from({length:quantity},()=>({...extra})):[];
+      const quantity=Math.max(0,Math.floor(Number(input.value)||0)),extra=extras[Number(input.dataset.extraQty)],burger=Number(input.dataset.extraBurger);
+      return extra?Array.from({length:quantity},()=>burger?({...extra,burger}):({...extra})):[];
     });
     if(!selected.length){showToast('Elegí al menos un extra');return}
     const plainLine=cart.find(x=>x.productIndex===index&&!(x.extras?.length));
     if(plainLine){plainLine.qty--;if(plainLine.qty<=0)cart.splice(cart.indexOf(plainLine),1)}
-    addCartLine(index,basePrice,selected,targetCount);closeModal();
+    addCartLine(index,basePrice,selected,1);closeModal();
   };
 }
 function editCartExtras(lineIndex){
