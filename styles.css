@@ -374,3 +374,6 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:tex
 }
 .cart-extras-edit{display:block;margin-top:4px;padding:0;border:0;background:none;color:var(--lime);font-size:10px;font-weight:800;cursor:pointer}
 .cart-extras-edit:hover{text-decoration:underline}
+.combo-burger-extra-panel{display:grid;gap:7px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
+.combo-burger-extra-panel+.combo-burger-extra-panel{margin-top:9px}
+.combo-burger-extra-panel h3{margin:0 0 2px;font-size:13px;color:var(--text)}
