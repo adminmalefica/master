@@ -114,9 +114,26 @@ function openDiscountPicker(current=0,onApply=()=>{}){
   openModal(`<div class="discount-picker"><p class="eyebrow">DESCUENTO</p><h2>Aplicar descuento</h2><p>Elegí el porcentaje para este pedido.</p><div class="discount-options">${options.map(percent=>`<button type="button" class="${percent===current?'active':''}" data-discount-percent="${percent}">${percent?percent+'%':'Sin descuento'}</button>`).join('')}</div></div>`);
   $('#modalBody').onclick=event=>{const button=event.target.closest('[data-discount-percent]');if(!button)return;onApply(Number(button.dataset.discountPercent));closeModal()};
 }
+function summarizeExtras(items){
+  const groups=new Map();
+  (items||[]).forEach(extra=>{
+    const burger=extra.burger?Number(extra.burger):0;
+    const key=burger+'|'+extra.name;
+    const group=groups.get(key)||{burger,name:extra.name,quantity:0};
+    group.quantity++;
+    groups.set(key,group);
+  });
+  const byBurger=new Map();
+  groups.forEach(group=>{
+    const key=group.burger||0;
+    if(!byBurger.has(key))byBurger.set(key,[]);
+    byBurger.get(key).push(group.name+(group.quantity>1?' x'+group.quantity:''));
+  });
+  return Array.from(byBurger.entries()).map(([burger,names])=>(burger?'Hamburguesa '+burger+': ':'')+names.join(', ')).join(' · ');
+}
 function renderCart(){
   const root=$('#cart');
-  root.innerHTML=cart.length?cart.map((x,i)=>`<div class="cart-item"><div class="qty-controls"><button data-cart-action="plus" data-index="${i}" aria-label="Sumar">+</button><strong>${x.qty}</strong><button data-cart-action="minus" data-index="${i}" aria-label="Restar">−</button></div><div><span class="cart-name">${escapeHTML(x.name)}</span>${x.extras?.length?`<span class="cart-extras">${x.extras.map(e=>escapeHTML(e.burger?`Hamburguesa ${e.burger}: ${e.name}`:e.name)).join(' · ')}</span><button type="button" class="cart-extras-edit" data-cart-action="extras" data-index="${i}">Editar extras</button>`:''}</div><div class="cart-line"><strong>${money(x.price*x.qty)}</strong><button data-cart-action="remove" data-index="${i}" aria-label="Quitar ${escapeHTML(x.name)}" title="Quitar">×</button></div></div>`).join(''):`<div class="empty-state"><div><div class="empty-icon">⌁</div><p>El ticket está vacío</p><small>Tocá un producto para agregarlo.</small></div></div>`;
+  root.innerHTML=cart.length?cart.map((x,i)=>`<div class="cart-item"><div class="qty-controls"><button data-cart-action="plus" data-index="${i}" aria-label="Sumar">+</button><strong>${x.qty}</strong><button data-cart-action="minus" data-index="${i}" aria-label="Restar">−</button></div><div><span class="cart-name">${escapeHTML(x.name)}</span>${x.extras?.length?`<span class="cart-extras">${escapeHTML(summarizeExtras(x.extras))}</span><button type="button" class="cart-extras-edit" data-cart-action="extras" data-index="${i}">Editar extras</button>`:''}</div><div class="cart-line"><strong>${money(x.price*x.qty)}</strong><button data-cart-action="remove" data-index="${i}" aria-label="Quitar ${escapeHTML(x.name)}" title="Quitar">×</button></div></div>`).join(''):`<div class="empty-state"><div><div class="empty-icon">⌁</div><p>El ticket está vacío</p><small>Tocá un producto para agregarlo.</small></div></div>`;
   const total=money(cartTotal());
   $('#cartTotal').textContent=total;$('#actionTotal').textContent=total;$('#saveOrder').disabled=!cart.length;$('#clearCart').disabled=!cart.length;
   const discountButton=$('#chooseDiscount');discountButton.textContent=cartDiscountPercent?`-${cartDiscountPercent}%`:'Descuento';discountButton.classList.toggle('active',!!cartDiscountPercent);
