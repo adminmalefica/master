@@ -372,3 +372,5 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:tex
   .catalog-panel .card-extra-label{display:none}
   .catalog-panel .card-extra-symbol{display:block;font-size:17px;line-height:1}
 }
+.cart-extras-edit{display:block;margin-top:4px;padding:0;border:0;background:none;color:var(--lime);font-size:10px;font-weight:800;cursor:pointer}
+.cart-extras-edit:hover{text-decoration:underline}
