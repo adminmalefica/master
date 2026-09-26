@@ -385,3 +385,10 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:tex
 /* Permite arrastrar tarjetas con el dedo en iOS sin activar el scroll de la página */
 #productGrid.ordering-products{touch-action:none}
 #productGrid.ordering-products .product-card{touch-action:none;user-select:none;-webkit-user-select:none}
+
+/* Edición de productos del menú */
+.product-setting-row{grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px}
+.product-edit-btn{min-height:34px;padding:0 12px;font-size:12px}
+.edit-product-current-image{display:flex;align-items:center;gap:10px;min-height:72px;color:var(--muted);font-size:12px}
+.edit-product-current-image img,.edit-product-current-image>span{width:64px;height:64px;display:grid;place-items:center;object-fit:cover;border:1px solid var(--line);border-radius:14px;background:var(--surface-2);font-size:30px}
+@media(max-width:600px){.product-setting-row{grid-template-columns:minmax(0,1fr) auto auto;gap:6px}.product-edit-btn{padding:0 9px}}
