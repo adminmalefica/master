@@ -36,7 +36,7 @@ const MENU_CATEGORY_ORDER=['Hamburguesas','Combos','Papas','Entradas','Bebidas']
 function categoryRank(category){const index=MENU_CATEGORY_ORDER.findIndex(item=>item.toLowerCase()===String(category||'').toLowerCase());return index<0?MENU_CATEGORY_ORDER.length:index}
 function orderedMenuCategories(){return [...new Set(products.map(product=>product.cat).filter(Boolean))].sort((a,b)=>categoryRank(a)-categoryRank(b)||String(a).localeCompare(String(b),'es'))}
 function orderProductsByCategory(){
-  const lineProducts=cart.map(line=>products[line.productIndex]);
+  const lineProducts=cart.map(line=>products.find(product=>product.name===line.name)||products[line.productIndex]);
   products=products.map((product,index)=>({product,index})).sort((a,b)=>categoryRank(a.product.cat)-categoryRank(b.product.cat)||a.index-b.index).map(entry=>entry.product);
   cart.forEach((line,index)=>{const product=lineProducts[index],newIndex=products.indexOf(product);if(newIndex>=0)line.productIndex=newIndex});
 }
