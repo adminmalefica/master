@@ -381,3 +381,7 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:tex
 /* Evita que los iconos compuestos de combos se partan en dos líneas */
 .product-icon-fixed,.product-icon-choice{white-space:nowrap;line-height:1;letter-spacing:-4px;font-size:24px}
 @media(max-width:420px){.product-icon-fixed,.product-icon-choice{letter-spacing:-4px;font-size:22px}}
+
+/* Permite arrastrar tarjetas con el dedo en iOS sin activar el scroll de la página */
+#productGrid.ordering-products{touch-action:none}
+#productGrid.ordering-products .product-card{touch-action:none;user-select:none;-webkit-user-select:none}
