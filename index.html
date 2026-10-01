@@ -86,8 +86,8 @@
       <section id="view-sales" class="view page-view">
         <div class="page-head sales-head"><div><p class="eyebrow">RENDIMIENTO</p><h1>Ventas</h1></div><div class="sales-period"><input id="salesDate" type="hidden"><button id="salesToday" class="sales-today active" type="button">Hoy</button><button id="salesWeek" class="sales-today" type="button">Esta semana</button><button id="salesMonthQuick" class="sales-today" type="button">Este mes</button></div></div>
         <div id="salesStats" class="sales-stats"></div>
-        <details class="sales-more"><summary>Más opciones: rango, mes y comparación</summary><div class="sales-advanced"><div class="sales-advanced-row"><label class="date-field">Mes<select id="salesMonth"></select></label><label class="date-field">Año<select id="salesYear"></select></label></div><div class="sales-advanced-row"><label class="date-field">Desde<input id="salesFrom" type="date"></label><label class="date-field">Hasta<input id="salesTo" type="date"></label></div><label class="date-field">Comparar con<select id="salesCompare"><option value="none">Sin comparación</option><option value="previous">Rango anterior (mismos días)</option><option value="week">Una semana antes</option><option value="month">Un mes antes</option></select></label></div></details>
-        <div class="two-cols"><div class="content-card"><h3>Productos más vendidos</h3><div id="topProducts"></div></div><div class="content-card"><h3>Historial</h3><div id="salesHistory"></div></div></div>
+        <details class="sales-more"><summary>Más opciones: rango y comparación</summary><div class="sales-advanced"><div class="sales-advanced-row"><label class="date-field">Desde<input id="salesFrom" type="date"></label><label class="date-field">Hasta<input id="salesTo" type="date"></label></div><label class="date-field">Comparar con<select id="salesCompare"><option value="none">Sin comparación</option><option value="previous">Rango anterior (mismos días)</option><option value="week">Una semana antes</option><option value="month">Un mes antes</option></select></label></div></details>
+        <div class="two-cols"><div class="content-card"><h3>Productos más vendidos</h3><div id="topProducts"></div></div><div class="content-card"><h3>Historial</h3><div id="salesHistory"></div></div></div><section class="content-card sales-last-months"><h3>Ventas en los últimos 3 meses</h3><div id="salesLastMonths" class="monthly-sales-list"></div></section>
       </section>
 
       <section id="view-expenses" class="view page-view">
@@ -118,7 +118,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
   <script src="./images.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qz-tray@2.2.5/qz-tray.js"></script>
-<script src="./app.js?v=20260930-1450"></script>
+<script src="./app.js?v=20261001-1215"></script>
 </body>
 </html>
    
