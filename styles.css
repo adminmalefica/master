@@ -392,3 +392,6 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:tex
 .edit-product-current-image{display:flex;align-items:center;gap:10px;min-height:72px;color:var(--muted);font-size:12px}
 .edit-product-current-image img,.edit-product-current-image>span{width:64px;height:64px;display:grid;place-items:center;object-fit:cover;border:1px solid var(--line);border-radius:14px;background:var(--surface-2);font-size:30px}
 @media(max-width:600px){.product-setting-row{grid-template-columns:minmax(0,1fr) auto auto;gap:6px}.product-edit-btn{padding:0 9px}}
+
+
+.sales-last-months{margin-top:15px}.monthly-sales-list{display:grid;gap:0;max-width:520px}.monthly-sales-line{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0;border-top:1px solid var(--line);font-size:16px}.monthly-sales-line:first-child{border-top:0}.monthly-sales-line span{color:var(--muted);font-weight:700}.monthly-sales-line strong{font-size:18px}
